@@ -1,0 +1,12 @@
+# ignore all files created during compilation
+*.[oa]
+
+#ignore all files in build subdirtory
+build/
+
+#ignore all temp files
+*~
+
+#ignore all files created by visual studio
+*.vcxproj*
+Debug/
