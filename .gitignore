@@ -1,5 +1,8 @@
 # ignore all files created during compilation
 *.[oa]
+*.class
+*.exe
+*.out
 
 #ignore all files in build subdirtory
 build/
@@ -10,3 +13,6 @@ build/
 #ignore all files created by visual studio
 *.vcxproj*
 Debug/
+*.sln
+*.suo
+

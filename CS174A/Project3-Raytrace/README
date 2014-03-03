@@ -1,0 +1,7 @@
+This code was implemented under linux environment and compiled by g++.
+
+The given head files were changed by adding extra library so that it can be compiled under g++
+
+There is a simple bash script "test.sh" that can test all txt files inside test folder
+
+
