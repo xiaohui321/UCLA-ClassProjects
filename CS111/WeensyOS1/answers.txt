@@ -1,0 +1,30 @@
+Name:
+	LAST  NAME: ZHOU
+	FIRST NAME: XIAOHUI
+
+UCLA ID:      104-014-248
+
+Collaborators: NONE
+
+-------------------------------------------------------------------------------
+Exercise 1:
+It should return the correct answer.
+The use of schedule() instead of run() will cause the SYS_GETPID for this process 
+be called later after the running of other processes, but the result of this call
+should return the same answer because this process should not be affected or 
+modified by other processes. When this process is called, its register values will
+be load back from its stack to the registers and so we should still get its correct
+answer.
+
+Exercise 3:
+I added a wait_pid to indicate another process the current process is waiting for if
+the current process is blocked.
+In addition, I added some extra code in schedule() to unlock all locked process if 
+the process they waiting for have exited.
+
+Exercise 4:
+The bug was that the process of with a zombie status will not be cleaned up and that
+slot will not be emptied afterwards. Thus, by modifying that part of code in interrupt() 
+we can clean these up and fix this bug.
+q
+Extra credit exercises:

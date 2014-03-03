@@ -1,0 +1,70 @@
+Name: XIAOHUI,ZHOU
+UCLA ID: 104-014-248
+
+Collaborators:
+
+-------------------------------------------------------------------------------
+
+Response to Exercise 1:
+
+The name of the scheduling algorithm is:
+- Round Robin
+
+(Exercise 2 is a coding exercise)
+
+Response to Exercise 3:
+
+Average turnaround time for scheduling_algorithm 0:
+- for process 1: 320 * 1 * 1ms + 319 * 3 * 1ms = 1277ms
+- for process 2: 320 * 2 * 1ms + 319 * 2 * 1ms = 1278ms
+- for process 3: 320 * 3 * 1ms + 319 * 1 * 1ms = 1279ms
+- for process 2: 320 * 4 * 1ms + 319 * 0 * 1ms = 1280ms
+- average time: 1278.5ms
+
+Average turnaround time for scheduling_algorithm 1:
+- for process 1: 320 * 1 * 1ms = 320ms
+- for process 2: 320 * 2 * 1ms = 640ms
+- for process 3: 320 * 3 * 1ms = 960ms
+- for process 4: 320 * 4 * 1ms = 1280ms
+- average time : 800ms
+
+Average wait time for scheduling_algorithm 0:
+- for process 1: 0 * 1ms = 0ms
+- for process 2: 1 * 1ms = 1ms
+- for process 3: 2 * 1ms = 2ms
+- for process 4: 3 * 1ms = 3ms
+- average time: 1.5ms
+
+Average wait time for scheduling_algorithm 1:
+- for process 1: 0 * 320 * 1ms = 0ms
+- for process 2: 1 * 320 * 1ms = 320ms
+- for process 3: 2 * 320 * 1ms = 640ms
+- for process 4: 3 * 320 * 1ms = 960ms
+- average time: 480ms
+
+Exercise 4:
+
+Did you complete Exercise 4A, Exercise 4B, or both for extra credit?
+- Exercise 4A: YES
+- Exercise 4B: YES
+
+Exercise 5:
+- During the execution of process 3 after it prints 3 or during the execution of 
+- process 4 before it prints 4, because the screen prints "123123" and a "4" is 
+- missing in the middle, so the interrupt happens between printing 3 and printing 4
+
+(Exercise 6 is a coding exercise)
+
+
+Anything else you'd like us to know:
+
+
+
+Extra credit exercises:
+I did extra-credit exercise 7, and I implemented a lottery scheduling. I created 
+100 tickets and every time when schedule() is called, a ticket will be selected 
+and that process will be executed.
+
+LIMITATION: I just simply created a function that does not really generate random
+numbers, so in case this machinism failed, the algorithm will be changed to round 
+robin automatically.

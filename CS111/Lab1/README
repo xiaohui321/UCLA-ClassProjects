@@ -1,0 +1,35 @@
+
+CS 111 Lab 1 
+Fall 2013
+
+
+This is a program that can parse commands into a tree structure and then able 
+to run commands in sequential or parallel
+ 
+Author: Xiaohui,Zhou
+ID: 104-014-248
+
+--------------------------------------------------------------------------------
+1c 
+   When time travel is enabled, both commands separated by \n and sequence 
+commands will be executed in parallel, 
+e.g
+ 
+a ; b
+  c
+
+then, "a;b" and "c" will be executed in parallel, and then executing "a;b", 
+a and b will be executed in parallel
+-------------------------------------------------------------------------------
+1b
+	no comment.
+-------------------------------------------------------------------------------
+1a 
+Limitations:
+	1. All the comments in the original script file will be removed.
+
+///////////////////////////////////////////////////////////////////////////////
+This is a skeleton for CS 111 Lab 1.
+
+Replace this README file with notes on your implementation.
+Mentions any special features or limitations.

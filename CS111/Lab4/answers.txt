@@ -1,0 +1,67 @@
+# Fill in your name, student ID, and email address in this file.
+# If you are working in a team, fill out the information for both team 
+# members.
+
+# SUBMIT THE LAB ONLY ONCE (from only one partner). This file will be
+# automatically parsed in order to give both team members credit for the
+# lab.
+
+# You need to fill in the EXERCISE sections describing your solutions
+# for Tasks 1, 2, and 3, as well as write the corresponding code.
+# If you did one or more extra credit problems, indicate which one in the
+# appropriate section below (remove the # sign first). If you have any other
+# information you'd like us to know, please add it at the end of the file.
+
+# Partner 1
+Name: XIAOHUI-ZHOU
+Student ID: 104-014-248
+Email: zhouxiaohui@ucla.edu
+
+# Partner 2 (if you're working in a team)
+Name: 
+Student ID: 
+Email: 
+
+# EXERCISE 1: What method you used to make your peer download and upload
+#    files in parallel?  (~1-3 sentences)
+
+By using fork(), everytime when the program need to download or upload, the 
+program will fork once and the child process will do the download or upload.
+
+# EXERCISE 2A: What conditions did you find and fix that would have
+#    triggered a buffer overrun bug?  (~1-3 sentences each)
+
+1.  a too long file name or no '\0' termination.
+    - ignore the remaining string after the max size
+    - added a '\0' at the end of that string
+
+# EXERCISE 2B: What other robustness problems did you fix?  (~1-3 sentences
+#    each)
+
+1. a file with a infinite size that will make the program downloading it forever.
+    - try again if the file exceed the max size
+2. a extremely slow connection, which will make the program downloading it forever.
+    - if the slow download exceed 5%, try again with another peer
+3. increased buffer size 
+4. check if the file exist, file in the right directory, etc.
+
+# EXERCISE 3: Describe the attacks you implemented for "evil mode".  Why
+#    are they attacks?  (~3-10 sentences each)
+
+uploader attacks:
+1. the file we will send is corrupted. (by change all bytes as 1)
+    and when this peer uploads, the file is also corrupted and this corrupted file will
+be spreaded out.
+
+downloader attacks:
+1. keep download a file from a peer forever, and that peer will not stop upload it
+
+
+# Extra credit problems File Integrity
+#Extra credit problem: File Integrity
+File Integrity
+It generally works, but there is an unknown bug that sometimes the process will executed normally but sometimes it will say:
+  osptracker responded to WANT command with unexpected format!
+  make: *** [run-good] Error 1
+
+# Add any other information you'd like us to know below this line.

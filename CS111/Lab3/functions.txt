@@ -1,0 +1,68 @@
+// ospfs_size2nblocks(size)
+//	Returns the number of blocks required to hold 'size' bytes of data.
+//   Input:   size -- file size
+//   Returns: a number of blocks
+uint32_t ospfs_size2nblocks(uint32_t size)
+{
+	return (size + OSPFS_BLKSIZE - 1) / OSPFS_BLKSIZE;
+}
+// ospfs_block(blockno)
+//	Use this function to load a block's contents from "disk".
+//   Input:   blockno -- block number
+//   Returns: a pointer to that block's data
+static void * ospfs_block(uint32_t blockno)
+{
+	return &ospfs_data[blockno * OSPFS_BLKSIZE];
+}
+// ospfs_inode(ino)
+//	Use this function to load a 'ospfs_inode' structure from "disk".
+//   Input:   ino -- inode number
+//   Returns: a pointer to the corresponding ospfs_inode structure
+static inline ospfs_inode_t * ospfs_inode(ino_t ino)
+{
+	ospfs_inode_t *oi;
+	if (ino >= ospfs_super->os_ninodes)
+		return 0;
+	oi = ospfs_block(ospfs_super->os_firstinob);
+	return &oi[ino];
+}
+// ospfs_inode_blockno(oi, offset)
+//	Use this function to look up the blocks that are part of a file's
+//	contents.
+//   Inputs:  oi     -- pointer to a OSPFS inode
+//	      offset -- byte offset into that inode
+//   Returns: the block number of the block that contains the 'offset'th byte
+//	      of the file
+static inline uint32_t ospfs_inode_blockno(ospfs_inode_t *oi, uint32_t offset)
+{
+	uint32_t blockno = offset / OSPFS_BLKSIZE;
+	if (offset >= oi->oi_size || oi->oi_ftype == OSPFS_FTYPE_SYMLINK)
+		return 0;
+	else if (blockno >= OSPFS_NDIRECT + OSPFS_NINDIRECT) {
+		uint32_t blockoff = blockno - (OSPFS_NDIRECT + OSPFS_NINDIRECT);
+		uint32_t *indirect2_block = ospfs_block(oi->oi_indirect2);
+		uint32_t *indirect_block = ospfs_block(indirect2_block[blockoff / OSPFS_NINDIRECT]);
+		return indirect_block[blockoff % OSPFS_NINDIRECT];
+	} else if (blockno >= OSPFS_NDIRECT) {
+		uint32_t *indirect_block = ospfs_block(oi->oi_indirect);
+		return indirect_block[blockno - OSPFS_NDIRECT];
+	} else
+		return oi->oi_direct[blockno];
+}
+// ospfs_inode_data(oi, offset)
+//	Use this function to load part of inode's data from "disk",
+//	where 'offset' is relative to the first byte of inode data.
+//
+//   Inputs:  oi     -- pointer to a OSPFS inode
+//	      offset -- byte offset into 'oi's data contents
+//   Returns: a pointer to the 'offset'th byte of 'oi's data contents
+//
+//	Be careful: the returned pointer is only valid within a single block.
+//	This function is a simple combination of 'ospfs_inode_blockno'
+//	and 'ospfs_block'.
+
+static inline void * ospfs_inode_data(ospfs_inode_t *oi, uint32_t offset)
+{
+	uint32_t blockno = ospfs_inode_blockno(oi, offset);
+	return (uint8_t *) ospfs_block(blockno) + (offset % OSPFS_BLKSIZE);
+}
