@@ -9,10 +9,10 @@ build/
 
 #ignore all temp files
 *~
+#*#
 
 #ignore all files created by visual studio
 *.vcxproj*
 Debug/
 *.sln
 *.suo
-
