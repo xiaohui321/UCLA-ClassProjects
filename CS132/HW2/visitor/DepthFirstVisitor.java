@@ -3,6 +3,8 @@
 //
 
 package visitor;
+
+import MiniJava.*;
 import java.util.Enumeration;
 import syntaxtree.*;
 
@@ -11,9 +13,13 @@ import syntaxtree.*;
  * order.  Your visitors may extend this class.
  */
 public class DepthFirstVisitor implements Visitor {
+	public SymbolTable symbolTable = new SymbolTable();
+	
+	
    //
    // Auto class visitors--probably don't need to be overridden.
    //
+
    public void visit(NodeList n) {
       for ( Enumeration<Node> e = n.elements(); e.hasMoreElements(); )
          e.nextElement().accept(this);
@@ -51,9 +57,7 @@ public class DepthFirstVisitor implements Visitor {
    public void visit(Goal n) {
       n.f0.accept(this);
       n.f1.accept(this);
-      
-      if(n.f2.kind != MiniJavaParserConstants.EOF)
-      throw new Error("message...");
+      n.f2.accept(this);//NodeToken
    }
 
    /**
@@ -77,24 +81,24 @@ public class DepthFirstVisitor implements Visitor {
     * f17 -> "}"
     */
    public void visit(MainClass n) {
-      n.f0.accept(this);
+      n.f0.accept(this);//NodeToken
       n.f1.accept(this);
-      n.f2.accept(this);
-      n.f3.accept(this);
-      n.f4.accept(this);
-      n.f5.accept(this);
-      n.f6.accept(this);
-      n.f7.accept(this);
-      n.f8.accept(this);
-      n.f9.accept(this);
-      n.f10.accept(this);
+      n.f2.accept(this);//NodeToken
+      n.f3.accept(this);//NodeToken
+      n.f4.accept(this);//NodeToken
+      n.f5.accept(this);//NodeToken
+      n.f6.accept(this);//NodeToken
+      n.f7.accept(this);//NodeToken
+      n.f8.accept(this);//NodeToken
+      n.f9.accept(this);//NodeToken
+      n.f10.accept(this);//NodeToken
       n.f11.accept(this);
-      n.f12.accept(this);
-      n.f13.accept(this);
+      n.f12.accept(this);//NodeToken
+      n.f13.accept(this);//NodeToken
       n.f14.accept(this);
       n.f15.accept(this);
-      n.f16.accept(this);
-      n.f17.accept(this);
+      n.f16.accept(this);//NodeToken
+      n.f17.accept(this);//NodeToken
    }
 
    /**

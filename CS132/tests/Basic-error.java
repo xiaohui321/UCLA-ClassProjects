@@ -11,5 +11,3 @@ class A {
 		return x;
 	}
 }
-
-a
