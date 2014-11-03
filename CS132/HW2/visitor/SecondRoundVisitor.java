@@ -22,7 +22,7 @@ public class SecondRoundVisitor extends GJDepthFirst<SymbolTable.Type,Object> {
 	
 	public void checkIsSame(SymbolTable.Type t1, SymbolTable.Type t2){
 		if(t1 != t2)
-			throw new Error("Expression Types are not equal");
+			throw new Error("Expression Types are not equal:" + t1 +"," + t2 + "[class " + currentClass + " method " + currentMethod + "]");
 	}
 	
 	public void checkReturnType(SymbolTable.Type t1, String classname, String method){
@@ -32,27 +32,32 @@ public class SecondRoundVisitor extends GJDepthFirst<SymbolTable.Type,Object> {
 	
 	public void checkIsBoolean(SymbolTable.Type t){
 		if(t != SymbolTable.Type.BOOLEAN)
-			throw new Error("Expression Type is not boolean");
+			throw new Error("Expression Type is not boolean" + "[class " + currentClass + " method " + currentMethod + "]");
 	}
 	
 	public void checkIsInt(SymbolTable.Type t){
 		if(t != SymbolTable.Type.INT)
-			throw new Error("Expression Type is not int");
+			throw new Error("Expression Type is not int" + "[class " + currentClass + " method " + currentMethod + "]");
 	}
 	
 	public void checkIsIntArray(SymbolTable.Type t){
 		if(t != SymbolTable.Type.INT_ARRAY)
-			throw new Error("Expression Type is not int[]");
+			throw new Error("Expression Type is not int[]" + "[class " + currentClass + " method " + currentMethod + "]");
 	}
 	
 	public void checkIsVoid(SymbolTable.Type t){
 		if(t != SymbolTable.Type.VOID)
-			throw new Error("Expression Type is not void");
+			throw new Error("Expression Type is not void" + "[class " + currentClass + " method " + currentMethod + "]");
 	}
 	
 	public void checkClassExist(String name){
 		if(! st.checkClassExisted(name))
-			throw new Error("Class " + name + " is not found");
+			throw new Error("Class " + name + " is not found"  + "[class " + currentClass + " method " + currentMethod + "]");
+	}
+	
+	public void checkClassMethodExist(String className, String method){
+		if(! st.checkClassMethodExisted(className,method))
+			throw new Error("Class " + className + " method " + method + " is not found"  + "[class " + currentClass + " method " + currentMethod + "]");
 	}
 
 	/**********************************
@@ -323,7 +328,7 @@ public class SecondRoundVisitor extends GJDepthFirst<SymbolTable.Type,Object> {
 	public  SymbolTable.Type visit(AssignmentStatement n, Object argu) {
 		n.f0.accept(this, argu);
 		st.checkIdentifierExistance_Extended(currentClass, currentMethod, currentName);
-		checkIsSame(n.f2.accept(this, argu),st.getSymbolType(currentClass, currentMethod, currentName));
+		checkIsSame(st.getSymbolType(currentClass, currentMethod, currentName),n.f2.accept(this, argu));
 		return null;
 	}
 
@@ -423,7 +428,7 @@ public class SecondRoundVisitor extends GJDepthFirst<SymbolTable.Type,Object> {
 	public  SymbolTable.Type visit(CompareExpression n, Object argu) {
 		checkIsInt(n.f0.accept(this, argu));
 		checkIsInt(n.f2.accept(this, argu));
-		return SymbolTable.Type.INT;
+		return SymbolTable.Type.BOOLEAN;
 	}
 
 	/**
@@ -490,13 +495,27 @@ public class SecondRoundVisitor extends GJDepthFirst<SymbolTable.Type,Object> {
 	 * f5 -> ")"
 	 */
 	public  SymbolTable.Type visit(MessageSend n, Object argu) {
-		SymbolTable.Type _ret=null;
+		if(n.f0.f0.choice instanceof ThisExpression){
+			n.f2.accept(this, argu);
+			checkClassMethodExist(currentClass,currentName);
+			SymbolTable.Type t = st.getMethodReturnType(currentClass, currentName);
+			//TODO check parameter
+			n.f4.accept(this, argu);
+			return t;
+		}else if(n.f0.f0.choice instanceof Identifier){
+			n.f0.accept(this, argu);
+			String theclass = st.checkVariableExistAndGetIdentifierClassName(currentClass, currentMethod, currentName);
+			n.f2.accept(this, argu);
+			checkClassMethodExist(theclass,currentName);
+			SymbolTable.Type t = st.getMethodReturnType(theclass,currentName);
+			//TODO check parameter
+			n.f4.accept(this, argu);
+			return t;
+		}
 		n.f0.accept(this, argu);
-		
 		n.f2.accept(this, argu);
-		
 		n.f4.accept(this, argu);
-		return _ret;
+		return null;
 		//TODO
 	}
 
@@ -569,7 +588,6 @@ public class SecondRoundVisitor extends GJDepthFirst<SymbolTable.Type,Object> {
 	 */
 	public  SymbolTable.Type visit(ThisExpression n, Object argu) {
 		return n.f0.accept(this, argu);
-		//UNSURE
 	}
 
 	/**

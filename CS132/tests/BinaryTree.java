@@ -10,8 +10,9 @@ class BinaryTree{
 class BT {
 
     public int Start(){
-	Tree root ;
+	
 	boolean ntb ;
+	Tree root ;
 	int nti ;
 
 	root = new Tree();

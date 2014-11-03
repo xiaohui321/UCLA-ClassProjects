@@ -49,7 +49,7 @@ public class FirstRoundVisitor extends DepthFirstVisitor {
 	public String currentClass = "";
 	public String currentMethod = "";
 	public SymbolTable.Type currentType = null;
-	//	public SymbolTable.Type expressionType = null;
+	public String currentTypeName = "";
 	public String currentName = "";
 
 	/**********************************
@@ -108,11 +108,11 @@ public class FirstRoundVisitor extends DepthFirstVisitor {
 
 		//add main method
 		currentMethod = "main";
-		st.addMethod(currentClass, "main", SymbolTable.Type.VOID);
+		st.addMethod(currentClass, "main", SymbolTable.Type.VOID, "");
 
 		//add string[] a parameter
 
-		st.addMethodParameter(currentClass, "main", n.f11.f0.tokenImage, SymbolTable.Type.STRING_ARRAY);
+		st.addMethodParameter(currentClass, "main", n.f11.f0.tokenImage, SymbolTable.Type.STRING_ARRAY, "");
 
 		n.f14.accept(this);
 		n.f15.accept(this);
@@ -173,9 +173,9 @@ public class FirstRoundVisitor extends DepthFirstVisitor {
 		n.f0.accept(this);
 		n.f1.accept(this);
 		if(currentMethod == "")
-			st.addClassVariable(currentClass, currentName, currentType);
+			st.addClassVariable(currentClass, currentName, currentType, currentTypeName);
 		else
-			st.addMethodVariable(currentClass, currentMethod, currentName, currentType);
+			st.addMethodVariable(currentClass, currentMethod, currentName, currentType,currentTypeName);
 	}
 
 	/**
@@ -198,7 +198,7 @@ public class FirstRoundVisitor extends DepthFirstVisitor {
 		n.f1.accept(this);
 		n.f2.accept(this);
 		currentMethod = currentName;
-		st.addMethod(currentClass,currentName, currentType);
+		st.addMethod(currentClass,currentName, currentType, currentTypeName);
 
 		n.f4.accept(this);
 
@@ -224,7 +224,7 @@ public class FirstRoundVisitor extends DepthFirstVisitor {
 	public void visit(FormalParameter n) {
 		n.f0.accept(this);
 		n.f1.accept(this);
-		st.addMethodParameter(currentClass, currentMethod, currentName, currentType);
+		st.addMethodParameter(currentClass, currentMethod, currentName, currentType, currentTypeName);
 	}
 
 	/**
@@ -243,6 +243,10 @@ public class FirstRoundVisitor extends DepthFirstVisitor {
 	 */
 	public void visit(Type n) {
 		n.f0.accept(this);
+		if(n.f0.choice instanceof Identifier){
+			currentType = SymbolTable.Type.CLASS;
+			currentTypeName = ((Identifier) n.f0.choice).f0.tokenImage;
+		}
 	}
 
 	/**

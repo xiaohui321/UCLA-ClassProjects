@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 
 public class SymbolTable {
+	boolean debug = false;
 	
 	public enum Type{
 		INT, INT_ARRAY, BOOLEAN, STRING_ARRAY, VOID, CLASS
@@ -12,12 +13,17 @@ public class SymbolTable {
 	 *   Symbol
 	 */
 	public class _Symbol{
-		public _Symbol(String variable, Type t) {
-			type = t;
-			name = variable;
-		}
 		public Type type;
 		public String name;
+		public String class_name = "";
+		
+		public _Symbol(String variable, Type t, String typeName) {
+			type = t;
+			name = variable;
+			if(t == Type.CLASS)
+				class_name = typeName;
+		}
+
 	}
 	
 	/*************************************************************
@@ -29,9 +35,12 @@ public class SymbolTable {
 
 		String name;
 		Type returnType;
-		public _Method(String method, Type t) {
+		String typeName;
+		public _Method(String method, Type t, String tn) {
 			name = method;
 			returnType = t;
+			if(t == Type.CLASS)
+				typeName = tn;
 		}
 
 		public boolean checkVariableExisted(String variable) {
@@ -51,21 +60,21 @@ public class SymbolTable {
 			return false;
 		}
 		
-		public void addParameter(String variable, Type t){
+		public void addParameter(String variable, Type t, String typeName){
 			if(checkParameterExisted(variable))
 				throw new Error("Duplicated parameter" +  variable + " in method " + name);
 			
-			parameter_list.add(new _Symbol(variable,t));
+			parameter_list.add(new _Symbol(variable,t, typeName));
 		}
 		
-		public void addVariable(String variable, Type t){
+		public void addVariable(String variable, Type t, String typeName){
 			if(checkParameterExisted(variable))
 				throw new Error("Variable " +  variable + " is already existed as parameter in method " + name);
 			
 			if(checkVariableExisted(variable))
 				throw new Error("Duplicated variable " +  variable + " in method " + name);
 			
-			symbol_table.put(variable,new _Symbol(variable,t));
+			symbol_table.put(variable,new _Symbol(variable,t, typeName));
 		}
 		
 		public Type getSymbolType(String variable){
@@ -84,6 +93,19 @@ public class SymbolTable {
 		
 		public Type getReturnType() {
 			return returnType;
+		}
+
+		public String getIndentifierClassName(String variable) {
+			_Symbol s = symbol_table.get(variable);
+			if(s != null)
+				return s.class_name;
+			
+			for(int i = 0; i < parameter_list.size(); i++){
+				if(parameter_list.get(i).name == variable)
+					return parameter_list.get(i).class_name;
+			}
+			return "";
+			
 		}
 	}
 	
@@ -140,38 +162,38 @@ public class SymbolTable {
 				return false;
 		}
 		
-		public void addVariable(String variable, Type type) {
+		public void addVariable(String variable, Type type, String typeName) {
 			if (checkVariableExisted(variable))
 				throw new Error("Duplicated variable " +  variable + " for Class " + className);
 		
-			class_variable_table.put(variable,  new _Symbol(variable, type));
+			class_variable_table.put(variable,  new _Symbol(variable, type,typeName));
 		}
 		
-		public void addMethod(String method, Type type) {
+		public void addMethod(String method, Type type, String typeName) {
 			if (checkMethodExisted(method))
 				throw new Error("Duplicated method " + method + " for Class " + className);
 			
-			class_method_table.put(method,  new _Method(method, type));
+			class_method_table.put(method,  new _Method(method, type, typeName));
 		}
 
-		public void addMethodVariable(String method, String variable, Type type) {
+		public void addMethodVariable(String method, String variable, Type type, String typeName) {
 			if (!checkMethodExisted(method))
 				throw new Error("Create method variable  " + variable + " for nonexist method " + method + " in Class " + className);
 			
 			if (checkMethodVariableExisted(method, variable))
 				throw new Error("Duplicated method variable  " + variable + " for method " + method + " in Class " + className);
 			
-			class_method_table.get(method).addVariable(variable, type);
+			class_method_table.get(method).addVariable(variable, type, typeName);
 		}
 		
-		public void addMethodParameter(String method, String variable, Type type) {
+		public void addMethodParameter(String method, String variable, Type type, String typeName) {
 			if (!checkMethodExisted(method))
 				throw new Error("Create method parameter " + variable + " for nonexist method " + method + " in Class " + className);
 			
 			if (checkMethodParameterExisted(method, variable))
 				throw new Error("Duplicated method parameter  " + variable + " for method " + method + " in Class " + className);
 			
-			class_method_table.get(method).addParameter(variable, type);
+			class_method_table.get(method).addParameter(variable, type, typeName);
 		}
 		
 		public Type getSymbolType(String method, String variable){
@@ -195,6 +217,15 @@ public class SymbolTable {
 			}
 			return class_method_table.get(method).getReturnType();
 		}
+
+		public String getIndentifierClassName(String method, String variable) {
+			_Symbol s = class_variable_table.get(variable);
+			if (s != null)
+				return s.class_name;
+			else
+				return class_method_table.get(method).getIndentifierClassName(variable);
+			
+		}
 	}
 	
 	/*************************************************************
@@ -208,7 +239,7 @@ public class SymbolTable {
 			throw new Error("Duplicated Class " + className);
 		
 		class_table.put(className, new _Class(className));
-		//System.out.println("DEBUG add class " + className );
+		if(debug) System.out.println("DEBUG add class " + className );
 	}
 	
 	public void addExtendedClass(String className, String extend){
@@ -216,39 +247,39 @@ public class SymbolTable {
 			throw new Error("Duplicated Class " + className);
 		
 		class_table.put(className, new _Class(className,extend));
-		//System.out.println("DEBUG add class " + className + " Extend " + extend );
+		if(debug) System.out.println("DEBUG add class " + className + " Extend " + extend );
 	}
 	
-	public void addMethod(String className, String method, Type type){
+	public void addMethod(String className, String method, Type type, String typeName){
 		if (!checkClassExisted(className))
 			throw new Error("Create method " + method + " for nonexist Class " + className);
 		
-		class_table.get(className).addMethod(method, type);
-		//System.out.println("DEBUG add class " + className + " method " + method + " of type " + type);
+		class_table.get(className).addMethod(method, type, typeName);
+		if(debug) System.out.println("DEBUG add class " + className + " method " + method + " of type " + type);
 	}
 	
-	public void addClassVariable(String className, String variable, Type type){
+	public void addClassVariable(String className, String variable, Type type, String typeName){
 		if (!checkClassExisted(className))
 			throw new Error("Create class variable " + variable + " for nonexist Class " + className);
 		
-		class_table.get(className).addVariable(variable, type);
-		//System.out.println("DEBUG add class " + className + " variable " + variable + " of type " + type);
+		class_table.get(className).addVariable(variable, type, typeName);
+		if(debug) System.out.println("DEBUG add class " + className + " variable " + variable + " of type " + type);
 	}
 	
-	public void addMethodVariable(String className, String method, String variable, Type type){
+	public void addMethodVariable(String className, String method, String variable, Type type, String typeName){
 		if (!checkClassExisted(className))
 			throw new Error("Create method variable  " + variable + " in method " + method + " for nonexist Class " + className);
 		
-		class_table.get(className).addMethodVariable(method,variable,type);
-		//System.out.println("DEBUG add class " + className + " method " + method + " variable " + variable + " of type " + type);
+		class_table.get(className).addMethodVariable(method,variable,type, typeName);
+		if(debug) System.out.println("DEBUG add class " + className + " method " + method + " variable " + variable + " of type " + type);
 	}
 	
-	public void addMethodParameter(String className, String method, String variable, Type type){
+	public void addMethodParameter(String className, String method, String variable, Type type, String typeName){
 		if (!checkClassExisted(className))
 			throw new Error("Create method variable  " + variable + " in method " + method + " for nonexist Class " + className);
 		
-		class_table.get(className).addMethodParameter(method,variable,type);
-		//System.out.println("DEBUG add class " + className + " method " + method + " parameter " + variable + " of type " + type);
+		class_table.get(className).addMethodParameter(method,variable,type, typeName);
+		if(debug) System.out.println("DEBUG add class " + className + " method " + method + " parameter " + variable + " of type " + type);
 	}
 	
 	
@@ -319,6 +350,7 @@ public class SymbolTable {
 			throw new Error("Class " + className + " not exist.");
 		}
 		return class_table.get(className).getSymbolType(method, variable);
+
 	}
 	
 	public Type getMethodReturnType(String className, String method){
@@ -326,5 +358,10 @@ public class SymbolTable {
 			throw new Error("Class " + className + " not exist.");
 		}
 		return class_table.get(className).getMethodReturnType(method);
+	}
+
+	public String checkVariableExistAndGetIdentifierClassName(String className, String method, String variable) {
+		checkIdentifierExistance_Extended(className,method,variable);
+		return class_table.get(className).getIndentifierClassName(method, variable);
 	}
 }
