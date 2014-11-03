@@ -1,8 +1,7 @@
-package MiniJava;
+package analysis;
 
 import syntaxtree.*;
 import visitor.*;
-
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -23,7 +22,7 @@ public class TypeCheck {
                 }
 
                 try {
-                    System.out.println("Processing: " + fileEntry.getName());
+                    System.out.println("\n\nProcessing: " + fileEntry.getName());
                     if (null == parse) {
                         parse = new MiniJavaParser(in);
                     }
@@ -33,11 +32,22 @@ public class TypeCheck {
                     
                     // put your logic here	
                     Node root = MiniJavaParser.Goal();
-                    System.out.println("Program parsed successfully");
-                    root.accept(new DepthFirstVisitor());
+                    //System.out.println("Program parsed successfully");
+                    
+                    FirstRoundVisitor visitor1= new FirstRoundVisitor();
+                    root.accept(visitor1);
+                    
+                    GJDepthFirst<SymbolTable.Type,Object> visitor2 = new SecondRoundVisitor(visitor1.getsymbolTable());
+                    root.accept(visitor2,null);
+                    
+                    System.out.println("Program type checked successfully");
+                    
                 }
                 catch (ParseException e) {
                     System.out.println(e.toString());
+                }
+                catch (Error e1) {
+                    System.out.println(e1.toString());
                 }
             }
         }
@@ -54,9 +64,13 @@ public class Typecheck {
            Node root = MiniJavaParser.Goal();
            System.out.println("Program parsed successfully");
            root.accept(new GJNoArguDepthFirst());
+           System.out.println("Program type checked successfully");
         }
         catch (ParseException e) {
            System.out.println(e.toString());
+        }
+        catch (Error e1) {
+           System.out.println("Type Error");
         }
    }
 }
