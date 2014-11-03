@@ -11,7 +11,7 @@ public class SecondRoundVisitor extends GJDepthFirst<SymbolTable.Type,Object> {
 	public String currentClass = "";
 	public String currentMethod = "";
 	public String currentName = "";
-
+    public String currentusedClass = "";
 	public SecondRoundVisitor(SymbolTable t){
 		st = t;
 	};
@@ -59,6 +59,7 @@ public class SecondRoundVisitor extends GJDepthFirst<SymbolTable.Type,Object> {
 		if(! st.checkClassMethodExisted(className,method))
 			throw new Error("Class " + className + " method " + method + " is not found"  + "[class " + currentClass + " method " + currentMethod + "]");
 	}
+	
 
 	/**********************************
 	 * Visitors
@@ -328,7 +329,9 @@ public class SecondRoundVisitor extends GJDepthFirst<SymbolTable.Type,Object> {
 	public  SymbolTable.Type visit(AssignmentStatement n, Object argu) {
 		n.f0.accept(this, argu);
 		st.checkIdentifierExistance_Extended(currentClass, currentMethod, currentName);
-		checkIsSame(st.getSymbolType(currentClass, currentMethod, currentName),n.f2.accept(this, argu));
+		SymbolTable.Type t1 = st.getSymbolType(currentClass, currentMethod, currentName);
+		SymbolTable.Type t2 = n.f2.accept(this, argu);
+		checkIsSame(t1,t2);
 		return null;
 	}
 
@@ -504,19 +507,32 @@ public class SecondRoundVisitor extends GJDepthFirst<SymbolTable.Type,Object> {
 			return t;
 		}else if(n.f0.f0.choice instanceof Identifier){
 			n.f0.accept(this, argu);
-			String theclass = st.checkVariableExistAndGetIdentifierClassName(currentClass, currentMethod, currentName);
+			currentusedClass = st.checkVariableExistAndGetIdentifierClassName(currentClass, currentMethod, currentName);
 			n.f2.accept(this, argu);
-			checkClassMethodExist(theclass,currentName);
-			SymbolTable.Type t = st.getMethodReturnType(theclass,currentName);
+			checkClassMethodExist(currentusedClass,currentName);
+			SymbolTable.Type t = st.getMethodReturnType(currentusedClass,currentName);
+			//TODO check parameter
+			n.f4.accept(this, argu);
+			return t;
+		}else if(n.f0.f0.choice instanceof AllocationExpression){
+			currentusedClass = ((AllocationExpression)n.f0.f0.choice).f1.f0.tokenImage;
+			n.f2.accept(this, argu);
+			checkClassMethodExist(currentusedClass,currentName);
+			SymbolTable.Type t = st.getMethodReturnType(currentusedClass,currentName);
+			//TODO check parameter
+			n.f4.accept(this, argu);
+			return t;
+		}else if(n.f0.f0.choice instanceof BracketExpression){
+			((BracketExpression)n.f0.f0.choice).f1.f0.accept(this,argu);
+			n.f2.accept(this, argu);
+			checkClassMethodExist(currentusedClass,currentName);
+			SymbolTable.Type t = st.getMethodReturnType(currentusedClass,currentName);
 			//TODO check parameter
 			n.f4.accept(this, argu);
 			return t;
 		}
-		n.f0.accept(this, argu);
-		n.f2.accept(this, argu);
-		n.f4.accept(this, argu);
-		return null;
-		//TODO
+		
+		throw new Error("Wrong Grammar");
 	}
 
 	/**
@@ -587,7 +603,7 @@ public class SecondRoundVisitor extends GJDepthFirst<SymbolTable.Type,Object> {
 	 * f0 -> "this"
 	 */
 	public  SymbolTable.Type visit(ThisExpression n, Object argu) {
-		return n.f0.accept(this, argu);
+		return SymbolTable.Type.CLASS;
 	}
 
 	/**
@@ -631,8 +647,6 @@ public class SecondRoundVisitor extends GJDepthFirst<SymbolTable.Type,Object> {
 	public  SymbolTable.Type visit(BracketExpression n, Object argu) {
 		return n.f1.accept(this, argu);
 	}
-
-
 
 
 }
