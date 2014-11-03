@@ -349,7 +349,16 @@ public class SymbolTable {
 		if(!checkClassExisted(className)){
 			throw new Error("Class " + className + " not exist.");
 		}
-		return class_table.get(className).getSymbolType(method, variable);
+		Type t = class_table.get(className).getSymbolType(method, variable);
+		
+		if ( t == null){
+			String extendClass = class_table.get(className).extended_class;
+			if(extendClass != "" && checkClassVariableExisted(extendClass, variable)){
+				t =  class_table.get(extendClass).getSymbolType("", variable);
+			}
+		}
+		
+		return t;
 
 	}
 	
@@ -357,11 +366,28 @@ public class SymbolTable {
 		if(!checkClassExisted(className)){
 			throw new Error("Class " + className + " not exist.");
 		}
-		return class_table.get(className).getMethodReturnType(method);
+		Type t =  class_table.get(className).getMethodReturnType(method);
+		
+		if ( t == null){
+			String extendClass = class_table.get(className).extended_class;
+			if(extendClass != "" && checkClassMethodExisted(extendClass, method)){
+				t =  class_table.get(extendClass).getMethodReturnType(method);
+			}
+		}
+		
+		return t;
 	}
 
 	public String checkVariableExistAndGetIdentifierClassName(String className, String method, String variable) {
 		checkIdentifierExistance_Extended(className,method,variable);
-		return class_table.get(className).getIndentifierClassName(method, variable);
+		String s =  class_table.get(className).getIndentifierClassName(method, variable);
+		if ( s == ""){
+			String extendClass = class_table.get(className).extended_class;
+			if(extendClass != "" && checkClassVariableExisted(extendClass, variable)){
+				s =  class_table.get(extendClass).getIndentifierClassName("", variable);
+			}
+		}
+		
+		return s;
 	}
 }
