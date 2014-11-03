@@ -6,7 +6,7 @@ import java.util.Hashtable;
 public class SymbolTable {
 	
 	public enum Type{
-		INT, INT_ARRAY, BOOLEAN, STRING_ARRAY, VOID
+		INT, INT_ARRAY, BOOLEAN, STRING_ARRAY, VOID, CLASS
 	}
 	/*************************************************************
 	 *   Symbol
@@ -28,10 +28,10 @@ public class SymbolTable {
 		ArrayList<_Symbol> parameter_list = new ArrayList<_Symbol>();
 
 		String name;
-		Type type;
+		Type returnType;
 		public _Method(String method, Type t) {
 			name = method;
-			type = t;
+			returnType = t;
 		}
 
 		public boolean checkVariableExisted(String variable) {
@@ -79,6 +79,11 @@ public class SymbolTable {
 				return s.type;
 
 			return null;
+		}
+
+		
+		public Type getReturnType() {
+			return returnType;
 		}
 	}
 	
@@ -182,6 +187,13 @@ public class SymbolTable {
 				return s.type;
 			else
 				return null;
+		}
+
+		public Type getMethodReturnType(String method) {
+			if(!checkMethodExisted(method)){
+				throw new Error("Class " + className + " Method " + method + " not exist.");
+			}
+			return class_method_table.get(method).getReturnType();
 		}
 	}
 	
@@ -288,12 +300,31 @@ public class SymbolTable {
 		else if(class_table.get(className).extended_class == "")
 			throw new Error("unidentified " + variable + " in class " + className + " method " + method);
 	}
+	
+	public void checkIdentifierExistance_Extended(String className, String method, String variable) {
+		if(checkClassMethodVariableExisted(className, method, variable) || 
+		   checkClassMethodParameterExisted(className, method, variable) ||
+			checkClassVariableExisted(className, variable))
+			return;
+		
+		String extendClass = class_table.get(className).extended_class;
+		if(extendClass != "" && checkClassVariableExisted(extendClass, variable))
+			return;
+			
+		throw new Error("unidentified " + variable + " in class " + className + " method " + method);
+	}
 
 	public Type getSymbolType(String className, String method, String variable){
 		if(!checkClassExisted(className)){
-			throw new Error("Class" + className + " not exist.");
+			throw new Error("Class " + className + " not exist.");
 		}
-		
 		return class_table.get(className).getSymbolType(method, variable);
+	}
+	
+	public Type getMethodReturnType(String className, String method){
+		if(!checkClassExisted(className)){
+			throw new Error("Class " + className + " not exist.");
+		}
+		return class_table.get(className).getMethodReturnType(method);
 	}
 }
