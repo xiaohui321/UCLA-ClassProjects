@@ -1,4 +1,4 @@
-package analysis;
+
 
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -389,5 +389,11 @@ public class SymbolTable {
 		}
 		
 		return s;
+	}
+
+	public String getSymbolType_STRING(String currentClass,
+			String currentMethod, String currentName) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

@@ -40,6 +40,8 @@ public class TypeCheck {
                     GJDepthFirst<SymbolTable.Type,Object> visitor2 = new SecondRoundVisitor(visitor1.getsymbolTable());
                     root.accept(visitor2,null);
                     
+                    //GJDepthFirst<String,Object> visitor3 = new ThirdRoundVisitor(visitor1.getsymbolTable());
+                    //root.accept(visitor3,null);
                     System.out.println("Program type checked successfully");
                     
                 }
