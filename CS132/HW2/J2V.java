@@ -7,9 +7,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
-public class Typecheck {
-/*    public static void main(String[] Args) {
-        File testDir = new File("../testers/hw2-tester/tests"); // create a folder called tests, and put the tests in it
+public class J2V {
+    public static void main(String[] Args) {
+        File testDir = new File("../testers/hw2-tester-hui/tests"); // create a folder called tests, and put the tests in it
         MiniJavaParser parse = null;
         for (final File fileEntry : testDir.listFiles()) {
             if (fileEntry.isFile()) {
@@ -54,5 +54,4 @@ public class Typecheck {
             }
         }
     }
-    */
 }
