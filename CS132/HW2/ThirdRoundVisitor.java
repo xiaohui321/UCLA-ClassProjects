@@ -6,12 +6,12 @@ import syntaxtree.*;
 import visitor.GJDepthFirst;
 
 public class ThirdRoundVisitor extends GJDepthFirst<String,Object> {
-	public SymbolTable st;
+	public CheckingSymbolTable st;
 	public String currentClass = null;
 	public String currentMethod = null;
 	public String currentName = null;
     public String currentusedClass = null;
-	public ThirdRoundVisitor(SymbolTable t){
+	public ThirdRoundVisitor(CheckingSymbolTable t){
 		st = t;
 	}
 
@@ -217,7 +217,7 @@ public class ThirdRoundVisitor extends GJDepthFirst<String,Object> {
 	 * f12 -> "}"
 	 */
 	public String visit(MethodDeclaration n, Object argu) {
-		SymbolTable.Type _ret=null;
+		CheckingSymbolTable.Type _ret=null;
 		n.f1.accept(this, argu);
 		n.f2.accept(this, argu);
 		currentMethod = currentName;

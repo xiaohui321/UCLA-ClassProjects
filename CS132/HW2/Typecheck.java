@@ -8,8 +8,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
 public class Typecheck {
-/*    public static void main(String[] Args) {
-        File testDir = new File("../testers/hw2-tester/tests"); // create a folder called tests, and put the tests in it
+    public static void main(String[] Args) {
+        File testDir = new File("../testers/hw2-tester-hui/tests"); // create a folder called tests, and put the tests in it
         MiniJavaParser parse = null;
         for (final File fileEntry : testDir.listFiles()) {
             if (fileEntry.isFile()) {
@@ -36,8 +36,8 @@ public class Typecheck {
                     
                     FirstRoundVisitor visitor1= new FirstRoundVisitor();
                     root.accept(visitor1);
-                    SymbolTable st = visitor1.getsymbolTable();
-                    GJDepthFirst<SymbolTable.Type,Object> visitor2 = new SecondRoundVisitor(st);
+                    CheckingSymbolTable st = visitor1.getsymbolTable();
+                    GJDepthFirst<CheckingSymbolTable.Type,Object> visitor2 = new SecondRoundVisitor(st);
                     root.accept(visitor2,null);
                     
                     GJDepthFirst<String,Object> visitor3 = new ThirdRoundVisitor(st);
@@ -54,5 +54,5 @@ public class Typecheck {
             }
         }
     }
-    */
+    
 }

@@ -45,10 +45,10 @@ import syntaxtree.WhileStatement;
 import visitor.DepthFirstVisitor;
 
 public class FirstRoundVisitor extends DepthFirstVisitor {
-	public SymbolTable st = new SymbolTable();
+	public CheckingSymbolTable st = new CheckingSymbolTable();
 	public String currentClass = null;
 	public String currentMethod = null;
-	public SymbolTable.Type currentType = null;
+	public CheckingSymbolTable.Type currentType = null;
 	public String currentTypeName = null;
 	public String currentName = null;
 
@@ -56,12 +56,12 @@ public class FirstRoundVisitor extends DepthFirstVisitor {
 	 * Helpers
 	 */
 	public void checkCurrentType_INT(){
-		if( st.getSymbolType(currentClass, currentMethod, currentName)!= SymbolTable.Type.INT)
+		if( st.getSymbolType(currentClass, currentMethod, currentName)!= CheckingSymbolTable.Type.INT)
 			throw new Error(currentName + " is not of type INT in class " + currentClass + " method " + currentMethod);
 	}
 
 	public void checkCurrentType_INT_ARRAY(){
-		if(st.getSymbolType(currentClass, currentMethod, currentName) != SymbolTable.Type.INT_ARRAY)
+		if(st.getSymbolType(currentClass, currentMethod, currentName) != CheckingSymbolTable.Type.INT_ARRAY)
 			throw new Error(currentName + " is not of type INT_ARRAY in class " + currentClass + " method " + currentMethod);
 	}
 
@@ -108,11 +108,11 @@ public class FirstRoundVisitor extends DepthFirstVisitor {
 
 		//add main method
 		currentMethod = "main";
-		st.addMethod(currentClass, "main", SymbolTable.Type.VOID, null);
+		st.addMethod(currentClass, "main", CheckingSymbolTable.Type.VOID, null);
 
 		//add string[] a parameter
 
-		st.addMethodParameter(currentClass, "main", n.f11.f0.tokenImage, SymbolTable.Type.STRING_ARRAY, null);
+		st.addMethodParameter(currentClass, "main", n.f11.f0.tokenImage, CheckingSymbolTable.Type.STRING_ARRAY, null);
 
 		n.f14.accept(this);
 		n.f15.accept(this);
@@ -244,7 +244,7 @@ public class FirstRoundVisitor extends DepthFirstVisitor {
 	public void visit(Type n) {
 		n.f0.accept(this);
 		if(n.f0.choice instanceof Identifier){
-			currentType = SymbolTable.Type.CLASS;
+			currentType = CheckingSymbolTable.Type.CLASS;
 			currentTypeName = ((Identifier) n.f0.choice).f0.tokenImage;
 		}
 	}
@@ -255,21 +255,21 @@ public class FirstRoundVisitor extends DepthFirstVisitor {
 	 * f2 -> "]"
 	 */
 	public void visit(ArrayType n) {
-		currentType = SymbolTable.Type.INT_ARRAY;
+		currentType = CheckingSymbolTable.Type.INT_ARRAY;
 	}
 
 	/**
 	 * f0 -> "boolean"
 	 */
 	public void visit(BooleanType n) {
-		currentType = SymbolTable.Type.BOOLEAN;
+		currentType = CheckingSymbolTable.Type.BOOLEAN;
 	}
 
 	/**
 	 * f0 -> "int"
 	 */   
 	public void visit(IntegerType n) {
-		currentType = SymbolTable.Type.INT;
+		currentType = CheckingSymbolTable.Type.INT;
 	}
 
 
@@ -604,7 +604,7 @@ public class FirstRoundVisitor extends DepthFirstVisitor {
 		n.f1.accept(this);
 	}
 
-	public SymbolTable getsymbolTable() {
+	public CheckingSymbolTable getsymbolTable() {
 		return st;
 	}
 
