@@ -30,11 +30,12 @@ public class J2V {
                     // put your logic here	
                     Node root = MiniJavaParser.Goal();
                     
-                    J2V_Visitor visitor1 = new J2V_Visitor();
-                    root.accept(visitor1, null);
+                    SymbolTableConstructionVisitor visitor1 = new SymbolTableConstructionVisitor();
+                    root.accept(visitor1);
                     SymbolTable st = visitor1.getSymbolTable();
-                    
-               
+                    J2VVisitor visitor2 = new J2VVisitor(st);
+                    String result = st.getClassAndMethodDeclaration() + root.accept(visitor2, null);
+                    System.out.println("---------------------------------\n" + result + "\n---------------------------------");
                 }
                 catch (ParseException e) {
                     System.out.println(e.toString());
