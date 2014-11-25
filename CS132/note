@@ -1,0 +1,13 @@
+Though the full specification defines many built-in operations, for your homework you are only allowed to use the following:
+
+Add, Sub, MulS
+Eq, Lt, LtS
+PrintIntS
+HeapAllocZ
+Error
+The full specification allows computed goto instructions, where the target address is specified by a register. For your homework, goto can only refer to code labels.
+
+The full specification allows strings everywhere. For your homework, strings are only allowed as arguments to the Error built-in.
+
+ERROR CHECK:
+null pointers and array out-of-bounds access

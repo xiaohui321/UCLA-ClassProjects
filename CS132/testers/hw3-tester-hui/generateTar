@@ -1,0 +1,11 @@
+#! /bin/bash
+
+cp ../../HW2/SymbolTable.java   ./hw3/SymbolTable.java
+cp ../../HW2/Info.java   ./hw3/Info.java
+cp ../../HW2/Result.java   ./hw3/Result.java
+cp ../../HW2/SymbolTableConstructionVisitor.java  ./hw3/SymbolTableConstructionVisitor.java
+cp ../../HW2/J2VVisitor.java   ./hw3/J2VVisitor.java
+
+tar -cvzf hw3.tgz ./hw3/*
+
+./run SelfTestCases hw3.tgz

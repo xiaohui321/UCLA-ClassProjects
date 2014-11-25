@@ -7,7 +7,7 @@ import java.io.FileNotFoundException;
 
 public class J2V {
     public static void main(String[] Args) {
-        File testDir = new File("../testers/hw3-tester/tests"); // create a folder called tests, and put the tests in it
+        File testDir = new File("../testers/hw3-tester-hui/tests"); // create a folder called tests, and put the tests in it
         MiniJavaParser parse = null;
         for (final File fileEntry : testDir.listFiles()) {
             if (fileEntry.isFile()) {
@@ -34,7 +34,9 @@ public class J2V {
                     root.accept(visitor1);
                     SymbolTable st = visitor1.getSymbolTable();
                     J2VVisitor visitor2 = new J2VVisitor(st);
-                    String result = st.getClassAndMethodDeclaration() + root.accept(visitor2, null);
+                    String result = st.getClassAndMethodDeclaration() + root.accept(visitor2, new Info()).result;
+                    if(st.needArrayAllocation)
+                    	result += "func AllocArray(size)\n\tbytes = MulS(size 4)\n\tbytes = Add(bytes 4)\n\tv = HeapAllocZ(bytes)\n\t[v] = size\n\tret v\n\n";
                     System.out.println("---------------------------------\n" + result + "\n---------------------------------");
                 }
                 catch (ParseException e) {
