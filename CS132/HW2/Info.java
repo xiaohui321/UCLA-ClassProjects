@@ -3,6 +3,7 @@ public class Info {
 	int indent;
 	String currentClass;
 	String currentMethod;
+	String usedClass;
 	boolean need_return_value;
 	public Info(){
 		indent = 0;

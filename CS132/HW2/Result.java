@@ -4,7 +4,6 @@ public class Result {
 		INT, INT_ARRAY, BOOLEAN,STRING
 	}
 
-	String usedClass;
 	
 	RESULT_TYPE type;
 
@@ -12,6 +11,7 @@ public class Result {
 	
 	String returnValue = "";
 	boolean hasReturnValue;
+	public boolean checkedNull = false;
 	public Result(){
 		hasReturnValue = false;
 	}

@@ -1,35 +1,176 @@
 
-const vmt_A
-  :A.run
-  :A.helper
+const vmt_LS
+  :LS.Start
+  :LS.Print
+  :LS.Search
+  :LS.Init
 
 func Main()
-  v0 = HeapAllocZ(4)
-  [v0] = :vmt_A
+  v0 = HeapAllocZ(12)
+  [v0] = :vmt_LS
   if v0 goto :branch0_null
     Error("null pointer")
   branch0_null:
   v1 = [v0]
   v1 = [v1 + 0]
-  v2 = call v1( v0 )
+  v2 = call v1( v0 10 )
   PrintIntS(v2)
   ret
 
-func A.run(this)
+func LS.Start(this sz)
   v3 = [this]
-  v3 = [v3 + 4]
-  v4 = call v3( this 12)
-  a = v4
+  v3 = [v3 + 12]
+  aux01 = call v3( this sz )
   v5 = [this]
   v5 = [v5 + 4]
-  v6 = call v5( this 15)
-  b = v6
-  v7 = Add(a b)
-  ret v7
+  aux02 = call v5( this  )
+  PrintIntS(9999)
+  if this goto :branch4_null
+    Error("null pointer")
+  branch4_null:
+  v7 = [this]
+  v7 = [v7 + 8]
+  v8 = call v7( this 8 )
+  PrintIntS(v8)
+  if this goto :branch5_null
+    Error("null pointer")
+  branch5_null:
+  v9 = [this]
+  v9 = [v9 + 8]
+  v10 = call v9( this 12 )
+  PrintIntS(v10)
+  if this goto :branch6_null
+    Error("null pointer")
+  branch6_null:
+  v11 = [this]
+  v11 = [v11 + 8]
+  v12 = call v11( this 17 )
+  PrintIntS(v12)
+  if this goto :branch7_null
+    Error("null pointer")
+  branch7_null:
+  v13 = [this]
+  v13 = [v13 + 8]
+  v14 = call v13( this 50 )
+  PrintIntS(v14)
+  ret 55
 
-func A.helper(this param)
-  x = param
-  v8 = Add(param 1)
-  param = v8
-  PrintIntS(x)
-  ret x
+func LS.Print(this)
+  j = 1
+  branch8_top:
+    v15 = [ this + 8]
+    v16 = LtS(j v15)
+    if0 v16 goto :branch8_end
+    v17 = [ this + 4]
+    v18 = v17
+    if v18 goto :branch9_null
+      Error("null pointer")
+    branch9_null:
+    v19 = [v18]
+    v19 = Lt(j v19)
+    if v19 goto :branch10_null
+      Error("array index out of bounds")
+    branch10_null:
+    v19 = MulS(j 4)
+    v19 = Add(v19 v18)
+    v19 = [v19 + 4]
+    PrintIntS(v19)
+    v20 = Add(j 1)
+    j = v20
+     goto :branch8_top
+  branch8_end:
+  ret 0
+
+func LS.Search(this num)
+  j = 1
+  ls01 = 0
+  ifound = 0
+  branch11_top:
+    v21 = [ this + 8]
+    v22 = LtS(j v21)
+    if0 v22 goto :branch11_end
+    v23 = [ this + 4]
+    v24 = v23
+    if v24 goto :branch12_null
+      Error("null pointer")
+    branch12_null:
+    v25 = [v24]
+    v25 = Lt(j v25)
+    if v25 goto :branch13_null
+      Error("array index out of bounds")
+    branch13_null:
+    v25 = MulS(j 4)
+    v25 = Add(v25 v24)
+    v25 = [v25 + 4]
+    aux01 = v25
+    v26 = Add(num 1)
+    aux02 = v26
+    v27 = LtS(aux01 num)
+    if0 v27 goto :branch14_else
+      nt = 0
+      goto :branch14_end
+    branch14_else:
+      v28 = LtS(aux01 aux02)
+      v29 = Eq( 0 v28)
+      if0 v29 goto :branch15_else
+        nt = 0
+        goto :branch15_end
+      branch15_else:
+        ls01 = 1
+        ifound = 1
+        v30 = [ this + 8]
+        j = v30
+      branch15_end:
+    branch14_end:
+    v31 = Add(j 1)
+    j = v31
+     goto :branch11_top
+  branch11_end:
+  ret ifound
+
+func LS.Init(this sz)
+  [ this + 8 ] = sz
+  v32 = call :AllocArray(sz)
+  [ this + 4 ] = v32
+  j = 1
+  v33 = [ this + 8]
+  v34 = Add(v33 1)
+  k = v34
+  branch16_top:
+    v35 = [ this + 8]
+    v36 = LtS(j v35)
+    if0 v36 goto :branch16_end
+    v37 = MulS(2 j)
+    aux01 = v37
+    v38 = Sub(k 3)
+    aux02 = v38
+    v39 = [ this + 4]
+    v41 = v39
+    if v41 goto :branch17_null
+      Error("null pointer")
+    branch17_null:
+    v42 = [v41]
+    v42 = Lt(j v42)
+    if v42 goto :branch18_bounds
+      Error("array index out of bounds")
+    branch18_bounds:
+    v42 = MulS(j 4)
+    v42 = Add(v42 v41)
+    [v42 + 4] = v40
+    v43 = Add(j 1)
+    j = v43
+    v44 = Sub(k 1)
+    k = v44
+     goto :branch16_top
+  branch16_end:
+  ret 0
+
+
+func AllocArray(size)
+  bytes = MulS(size 4)
+  bytes = Add(bytes 4)
+  v = HeapAllocZ(bytes)
+  [v] = size
+  ret v
+
+

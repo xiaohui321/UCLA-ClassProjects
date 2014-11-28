@@ -624,7 +624,7 @@ public class SymbolTable {
 	public int getAllocationSize(String className){
 		_Class c = classTable.get(className);
 		if(c == null)
-			throw new Error("unfound class1");
+			return 4;
 		
 		int result = 4*c.class_variable_table.size();
 		if(c.parentClassName == null) result += 4;
@@ -635,7 +635,7 @@ public class SymbolTable {
 	public int getFunctionAllocationSize(String className){
 		_Class c = classTable.get(className);
 		if(c == null)
-			throw new Error("unfound class2");
+			return 4;
 		
 		int result = 4*c.class_method_table.size();
 		if(c.parentClassName != null)
@@ -646,7 +646,7 @@ public class SymbolTable {
 	public int getVariableAllocationPosition(String className, String name){
 		int size = getAllocationSize(className);
 		while(true){
-			if(className == null) throw new Error("2wrong name");
+			if(className == null) return 0;
 			_Class c = classTable.get(className);
 			size -= c.class_var_num*4;
 			_Symbol s = c.class_variable_table.get(name);
@@ -662,7 +662,7 @@ public class SymbolTable {
 	public int getFunctionPosition(String className, String name) {
 		int size = getFunctionAllocationSize(className);
 		while(true){
-			if(className == null) throw new Error("1wrong name");
+			if(className == null) return 0;
 			_Class c = classTable.get(className);
 			size -= c.class_method_num*4;
 			_Method s = c.class_method_table.get(name);
@@ -675,10 +675,65 @@ public class SymbolTable {
 		return size;
 	}
 
-	public String getIdentifierName(String className, String methodName, String name) {
+	public boolean checkLocalVariable(String className, String methodName, String name) {
 		_Class c = classTable.get(className);
 		_Method m = c.class_method_table.get(methodName);
-		if(m.symbol_table.containsKey(name)) return name;
-		return "[this + ";// + //getVariableAllocationPosition(className, name) + "]";
+		if(m.symbol_table.containsKey(name)) return true;
+		for(_Symbol n : m.parameters_list){
+			if(n.symbolName == name) return true;
+		}
+		return false;
+	}
+	public boolean isClassName(String name){
+		return classTable.containsKey(name);
+	}
+
+	public boolean isClassVariable(String className, String name) {
+		while(true){
+			if(className == null) return false;
+			_Class c = classTable.get(className);
+			if(c.class_variable_table.containsKey(name)) return true;
+			className = c.parentClassName;
+		}
+	}
+
+	public String getClassNameByIDInMethod(String className, String methodName, String name) {
+		while(true){
+			if(className == null) return null;
+			_Class c = classTable.get(className);
+			_Method m = c.class_method_table.get(methodName);
+			if(m != null){
+				_Symbol s = m.symbol_table.get(name);
+				if(s!= null){
+					if(s.type.type == TYPES.CLASS)
+						return s.type.className;
+					else
+						return null;
+				}
+				for(_Symbol symbol : m.parameters_list){
+					if(symbol.symbolName == name){
+						if(symbol.type.type == TYPES.CLASS)
+							return symbol.type.className;
+						else
+							return null;
+					}
+				}
+			}
+		}
+	}
+
+	public String getClassNameByIDInClassVariable(String className, String name) {
+		while(true){
+			if(className == null) return null;
+			_Class c = classTable.get(className);
+			_Symbol s = c.class_variable_table.get(name);
+			if(s != null){
+					if(s.type.type == TYPES.CLASS)
+						return s.type.className;
+					else
+						return null;
+			}
+			className = c.parentClassName;
+		}
 	}
 }

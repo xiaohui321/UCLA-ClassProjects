@@ -168,18 +168,6 @@ public class J2VVisitor extends GJDepthFirst<Result, Info> {
 	}
 
 	/**
-	 * f0 -> Block()
-	 *       | AssignmentStatement()
-	 *       | ArrayAssignmentStatement()
-	 *       | IfStatement()
-	 *       | WhileStatement()
-	 *       | PrintStatement()
-	 */
-	public Result visit(Statement n, Info info) {
-		return n.f0.accept(this, info);
-	}
-
-	/**
 	 * f0 -> ClassDeclaration()
 	 *       | ClassExtendsDeclaration()
 	 */
@@ -225,39 +213,6 @@ public class J2VVisitor extends GJDepthFirst<Result, Info> {
 	public Result visit(VarDeclaration n, Info info) {
 		return null;
 	}
-	
-	/**
-	 * f0 -> AndExpression()
-	 *       | CompareExpression()
-	 *       | PlusExpression()
-	 *       | MinusExpression()
-	 *       | TimesExpression()
-	 *       | ArrayLookup()
-	 *       | ArrayLength()
-	 *       | MessageSend()
-	 *       | PrimaryExpression()
-	 */
-	public Result visit(Expression n, Info info) {
-		return n.f0.accept(this, info);
-	}
-
-	/**
-	 * f0 -> IntegerLiteral()
-	 *       | TrueLiteral()
-	 *       | FalseLiteral()
-	 *       | Identifier()
-	 *       | ThisExpression()
-	 *       | ArrayAllocationExpression()
-	 *       | AllocationExpression()
-	 *       | NotExpression()
-	 *       | BracketExpression()
-	 */
-	public Result visit(PrimaryExpression n, Info info) {
-		return n.f0.accept(this, info);
-	}
-
-	
-	/***********************************************/
 
 	/**
 	 * f0 -> MainClass()
@@ -270,7 +225,7 @@ public class J2VVisitor extends GJDepthFirst<Result, Info> {
 		r.appendResult("\n");
 		return r;
 	}
-
+	
 	/**
 	 * f0 -> "class"
 	 * f1 -> Identifier()
@@ -301,6 +256,50 @@ public class J2VVisitor extends GJDepthFirst<Result, Info> {
 		r.appendResult(info.getIndent() + "ret\n\n");
 		return r;
 	}
+	
+	/**
+	 * f0 -> AndExpression()
+	 *       | CompareExpression()
+	 *       | PlusExpression()
+	 *       | MinusExpression()
+	 *       | TimesExpression()
+	 *       | ArrayLookup()
+	 *       | ArrayLength()
+	 *       | MessageSend()
+	 *       | PrimaryExpression()
+	 */
+	public Result visit(Expression n, Info info) {
+		return n.f0.accept(this, info);
+	}
+
+	/**
+	 * f0 -> Block()
+	 *       | AssignmentStatement()
+	 *       | ArrayAssignmentStatement()
+	 *       | IfStatement()
+	 *       | WhileStatement()
+	 *       | PrintStatement()
+	 */
+	public Result visit(Statement n, Info info) {
+		return n.f0.accept(this, info);
+	}
+	
+	/**
+	 * f0 -> IntegerLiteral()
+	 *       | TrueLiteral()
+	 *       | FalseLiteral()
+	 *       | Identifier()
+	 *       | ThisExpression()
+	 *       | ArrayAllocationExpression()
+	 *       | AllocationExpression()
+	 *       | NotExpression()
+	 *       | BracketExpression()
+	 */
+	public Result visit(PrimaryExpression n, Info info) {
+		return n.f0.accept(this, info);
+	}
+
+	/***********************************************/
 
 	/**
 	 * f0 -> PrimaryExpression()
@@ -477,31 +476,7 @@ public class J2VVisitor extends GJDepthFirst<Result, Info> {
 		
 		Result r1 = n.f10.accept(this, info);
 		r.mergeResult(r1);
-		r.appendResult(info.getIndent() + "ret ");
-		r.appendResult(r1.returnValue);
-		r.appendResult("\n\n");
-		return r;
-	}
-	
-	/**
-	 * f0 -> Identifier()
-	 * f1 -> "="
-	 * f2 -> Expression()
-	 * f3 -> ";"
-	 */
-	public Result visit(AssignmentStatement n, Info info) {
-		Result r = new Result();
-		Result r1 = n.f2.accept(this, info);
-		if(r1.hasReturnValue){
-			r.mergeResult(r1);
-		}
-		r.appendResult(info.getIndent() + n.f0.accept(this, info).returnValue + " = ");
-		if(r1.hasReturnValue){
-			r.appendResult(r1.returnValue);
-		}else{
-			r.mergeResult(r1);
-		}
-		r.appendResult("\n");
+		r.appendResult(info.getIndent() + "ret "+ r1.returnValue + "\n\n");
 		return r;
 	}
 	
@@ -593,7 +568,7 @@ public class J2VVisitor extends GJDepthFirst<Result, Info> {
 		Result r1 = n.f1.accept(this, info);
 		String var = getNextVarName();
 		r.mergeResult(r1);
-		r.appendResult(info.getIndent() + var +" = Eq( 0 "+ r1.returnValue + "\n");
+		r.appendResult(info.getIndent() + var +" = Eq( 0 "+ r1.returnValue + ")\n");
 		r.setReturnValue(var);
 		return r;
 	}
@@ -605,16 +580,6 @@ public class J2VVisitor extends GJDepthFirst<Result, Info> {
 	 */
 	public Result visit(BracketExpression n, Info info) {
 		return n.f1.accept(this, info);
-	}
-
-	/**
-	 * f0 -> "this"
-	 */
-	public Result visit(ThisExpression n, Info info) {
-		Result r = new Result();
-		r.usedClass = info.currentClass;
-		r.setReturnValue("this");
-		return r;
 	}
 
 	/**
@@ -631,15 +596,14 @@ public class J2VVisitor extends GJDepthFirst<Result, Info> {
 		info.incrementIndent();
 		Result r1 = n.f2.accept(this, info);
 		r.mergeResult(r1);
-		r.appendResult(info.getIndent() + "if0 " + r1.returnValue + " goto :" + branchName + "_end:\n");
+		r.appendResult(info.getIndent() + "if0 " + r1.returnValue + " goto :" + branchName + "_end\n");
 		r.mergeResult(n.f4.accept(this, info));
-		r.appendResult(info.getIndent() + "goto :" + branchName + "_top:\n");
+		r.appendResult(info.getIndent() + " goto :" + branchName + "_top\n");
 		info.decrementIndent();
 		r.appendResult(info.getIndent() + branchName + "_end:\n");
 		return r;
 	}
-	/////////////////////////////////////////////////
-
+	
 	/**
 	 * f0 -> "{"
 	 * f1 -> ( Statement() )*
@@ -647,96 +611,6 @@ public class J2VVisitor extends GJDepthFirst<Result, Info> {
 	 */
 	public Result visit(Block n, Info info) {
 		return n.f1.accept(this, info);
-	}
-
-	/**
-	 * f0 -> Identifier()
-	 * f1 -> "["
-	 * f2 -> Expression()
-	 * f3 -> "]"
-	 * f4 -> "="
-	 * f5 -> Expression()
-	 * f6 -> ";"
-	 */
-	public Result visit(ArrayAssignmentStatement n, Info info) {
-		Result r = new Result();
-		n.f0.accept(this, info);
-		n.f2.accept(this, info);
-		n.f5.accept(this, info);
-		return r;
-		//TODO
-	}
-
-
-	/**
-	 * f0 -> PrimaryExpression()
-	 * f1 -> "["
-	 * f2 -> PrimaryExpression()
-	 * f3 -> "]"
-	 */
-	public Result visit(ArrayLookup n, Info info) {
-		Result r = new Result();
-		Result r1 = n.f0.accept(this, info);
-		Result r2 = n.f2.accept(this, info);
-		r.mergeResult(r1);
-		r.mergeResult(r2);
-		String var1 = getNextVarName();
-		String var2 = getNextVarName();
-		String branch1 = getNextBranchName();
-		String branch2 = getNextBranchName();
-		r.appendResult(info.getIndent() + var1 + " = " + r1.returnValue + "\n");
-		r.appendResult(info.getIndent() + "if " + var1 + " goto :" + branch1 + "_null\n");
-		r.appendResult(info.getIndent() + "\tError(\"null pointer\")\n");
-		r.appendResult(info.getIndent() + branch1 + "_null:\n");
-		r.appendResult(info.getIndent() + var2 + " = [" + var1 + "]\n");
-		r.appendResult(info.getIndent() + var2 + " = Lt(" + r2.returnValue + " " + var2 + ")\n");
-		r.appendResult(info.getIndent() + "if " + var2 + " goto :" + branch2 + "_null\n");
-		r.appendResult(info.getIndent() + "\tError(\"array index out of bounds\")\n");
-		r.appendResult(info.getIndent() + branch2 + "_null:\n");
-		r.appendResult(info.getIndent() + var2 + " = MulS(" + r2.returnValue + " 4)\n");
-		r.appendResult(info.getIndent() + var2 + " = Add(" + var2 + " " + var1 + ")\n");
-		r.appendResult(info.getIndent() + var2 + " = [" + var2 + " + 4]\n");
-		r.setReturnValue(var2);
-		return r;
-	}
-
-	/**
-	 * f0 -> PrimaryExpression()
-	 * f1 -> "."
-	 * f2 -> "length"
-	 */
-	public Result visit(ArrayLength n, Info info) {
-		Result r = new Result();
-		n.f0.accept(this, info);
-		return r;
-		//TODO
-	}
-
-	/**
-	 * f0 -> PrimaryExpression()
-	 * f1 -> "."
-	 * f2 -> Identifier()
-	 * f3 -> "("
-	 * f4 -> ( ExpressionList() )?
-	 * f5 -> ")"
-	 */
-	public Result visit(MessageSend n, Info info) {
-		Result r = new Result();
-		Result r1 = n.f0.accept(this, info);
-		r.mergeResult(r1);
-		String var = getNextVarName();
-		r.appendResult(info.getIndent() + var + " = [" + r1.returnValue + "]\n");
-		if(r1.usedClass == null)
-			r1.usedClass = r1.returnValue;
-		//TODO debug
-		int pos = st.getFunctionPosition(r1.usedClass, n.f2.f0.tokenImage);
-		r.appendResult(info.getIndent() + var + " = [" + var + " + " + pos + "]\n");
-		Result r2 = n.f4.accept(this, info);
-		r.mergeResult(r2);
-		String var2 = getNextVarName();
-		r.appendResult(info.getIndent() + var2 + " = call " + var + "( " + r1.returnValue  +  " " + r2.returnValue + " )\n");
-		r.setReturnValue(var2);
-		return r;
 	}
 
 	/**
@@ -782,6 +656,164 @@ public class J2VVisitor extends GJDepthFirst<Result, Info> {
 		return r;
 	}
 
+	/////////////////////////////////////////////////
+	
+	/**
+	 * f0 -> Identifier()
+	 * f1 -> "["
+	 * f2 -> Expression()
+	 * f3 -> "]"
+	 * f4 -> "="
+	 * f5 -> Expression()
+	 * f6 -> ";"
+	 */
+	public Result visit(ArrayAssignmentStatement n, Info info) {
+		Result r = new Result();
+		Result r1 = n.f0.accept(this, info);
+		Result r2 = n.f2.accept(this, info);
+		Result r3 = n.f5.accept(this, info);
+		if(r1.hasReturnValue){
+			r.mergeResult(r1);
+		}
+		if(r2.hasReturnValue){
+			r.mergeResult(r2);
+		}
+		if(r3.hasReturnValue){
+			r.mergeResult(r3);
+		}
+		String var1 = getNextVarName();
+		String var2 = getNextVarName();
+		String branch1 = getNextBranchName();
+		String branch2 = getNextBranchName();
+		r.appendResult(info.getIndent() + var1 + " = ");
+		if(r1.hasReturnValue){
+			r.appendResult(r1.returnValue);
+		}
+		else{
+			r.mergeResult(r1);
+		}
+		r.appendResult("\n");
+		r.appendResult(info.getIndent() + "if " + var1 + " goto :" + branch1 + "_null\n");
+		r.appendResult(info.getIndent() + "\tError(\"null pointer\")\n");
+		r.appendResult(info.getIndent() + branch1 + "_null:\n");
+		
+		r.appendResult(info.getIndent() + var2 + " = [" + var1 + "]\n");
+		r.appendResult(info.getIndent() + var2 + " = Lt(");
+		if(r2.hasReturnValue){
+			r.appendResult(r2.returnValue);
+		}else{
+			r.mergeResult(r2);
+		}
+		r.appendResult(" " + var2 + ")\n");
+		r.appendResult(info.getIndent() + "if " + var2 + " goto :" + branch2 + "_bounds\n");
+		r.appendResult(info.getIndent() + "\tError(\"array index out of bounds\")\n");
+		r.appendResult(info.getIndent() + branch2 + "_bounds:\n");
+		r.appendResult(info.getIndent() + var2 + " = MulS(");
+		if(r2.hasReturnValue){
+			r.appendResult(r2.returnValue);
+		}else{
+			r.mergeResult(r2);
+		}
+		r.appendResult(" 4)\n");
+		r.appendResult(info.getIndent() + var2 + " = Add(" + var2 + " " + var1 + ")\n");
+		r.appendResult(info.getIndent() + "[" + var2 + " + 4] = ");
+		if(r3.hasReturnValue){
+			r.appendResult(r3.returnValue);
+		}else{
+			r.mergeResult(r3);
+		}
+		r.appendResult("\n");
+		return r;
+	}
+
+
+	/**
+	 * f0 -> PrimaryExpression()
+	 * f1 -> "["
+	 * f2 -> PrimaryExpression()
+	 * f3 -> "]"
+	 */
+	public Result visit(ArrayLookup n, Info info) {
+		Result r = new Result();
+		Result r1 = n.f0.accept(this, info);
+		Result r2 = n.f2.accept(this, info);
+		r.mergeResult(r1);
+		r.mergeResult(r2);
+		String var1 = getNextVarName();
+		String var2 = getNextVarName();
+		String branch1 = getNextBranchName();
+		String branch2 = getNextBranchName();
+		r.appendResult(info.getIndent() + var1 + " = " + r1.returnValue + "\n");
+		r.appendResult(info.getIndent() + "if " + var1 + " goto :" + branch1 + "_null\n");
+		r.appendResult(info.getIndent() + "\tError(\"null pointer\")\n");
+		r.appendResult(info.getIndent() + branch1 + "_null:\n");
+		r.appendResult(info.getIndent() + var2 + " = [" + var1 + "]\n");
+		r.appendResult(info.getIndent() + var2 + " = Lt(" + r2.returnValue + " " + var2 + ")\n");
+		r.appendResult(info.getIndent() + "if " + var2 + " goto :" + branch2 + "_null\n");
+		r.appendResult(info.getIndent() + "\tError(\"array index out of bounds\")\n");
+		r.appendResult(info.getIndent() + branch2 + "_null:\n");
+		r.appendResult(info.getIndent() + var2 + " = MulS(" + r2.returnValue + " 4)\n");
+		r.appendResult(info.getIndent() + var2 + " = Add(" + var2 + " " + var1 + ")\n");
+		r.appendResult(info.getIndent() + var2 + " = [" + var2 + " + 4]\n");
+		r.setReturnValue(var2);
+		return r;
+	}
+
+	/**
+	 * f0 -> PrimaryExpression()
+	 * f1 -> "."
+	 * f2 -> "length"
+	 */
+	public Result visit(ArrayLength n, Info info) {
+		Result r = new Result();
+		Result r1 = n.f0.accept(this, info);
+		r.mergeResult(r1);
+		String var = getNextVarName();
+		r.appendResult(info.getIndent() + var + " = [" + r1.returnValue + "]\n");
+		r.setReturnValue(var);
+		return r;
+	}
+
+	/**
+	 * f0 -> PrimaryExpression()
+	 * f1 -> "."
+	 * f2 -> Identifier()
+	 * f3 -> "("
+	 * f4 -> ( ExpressionList() )?
+	 * f5 -> ")"
+	 */
+	public Result visit(MessageSend n, Info info) {
+		Result r = new Result();
+		info.usedClass = info.currentClass;
+		Result r1 = n.f0.accept(this, info);
+		if(r1.hasReturnValue){
+			r.mergeResult(r1);
+		}
+
+		String var = getNextVarName();
+		String branch = getNextBranchName();
+		if(r1.checkedNull == false){
+			r.appendResult(info.getIndent() + "if " + r1.returnValue + " goto :" + branch + "_null\n");
+			r.appendResult(info.getIndent() + "\tError(\"null pointer\")\n");
+			r.appendResult(info.getIndent() + branch + "_null:\n");
+		}
+		
+
+		r.appendResult(info.getIndent() + var + " = [" + r1.returnValue + "]\n");
+		if(info.usedClass == null || info.usedClass == "")
+			throw new Error("used class error");
+		int pos = st.getFunctionPosition(info.usedClass, n.f2.f0.tokenImage);
+		r.appendResult(info.getIndent() + var + " = [" + var + " + " + pos + "]\n");
+		Result r2 = n.f4.accept(this, info);
+		r.mergeResult(r2);
+		String var2 = getNextVarName();
+		r.appendResult(info.getIndent() + var2 + " = call " + var + "( " + r1.returnValue  +  " " + r2.returnValue + " )\n");
+		r.setReturnValue(var2);
+		return r;
+	}
+
+
+
 	/**
 	 * f0 -> "new"
 	 * f1 -> Identifier()
@@ -800,7 +832,8 @@ public class J2VVisitor extends GJDepthFirst<Result, Info> {
 		r.appendResult(info.getIndent() + "\tError(\"null pointer\")\n");
 		r.appendResult(info.getIndent() + branchName + "_null:\n");
 		r.setReturnValue(varName);
-		r.usedClass = className;
+		info.usedClass = className;
+		r.checkedNull = true;
 		return r;
 	}
 
@@ -809,10 +842,62 @@ public class J2VVisitor extends GJDepthFirst<Result, Info> {
 	 */
 	public Result visit(Identifier n, Info info) {
 		Result r = new Result();
-		r.setReturnValue(n.f0.tokenImage);
+		if(st.isClassName(n.f0.tokenImage)){
+			info.usedClass = n.f0.tokenImage;
+			r.setReturnValue(n.f0.tokenImage);
+		}else if(st.isClassVariable(info.currentClass, n.f0.tokenImage)){
+			String var = getNextVarName();
+			int pos = st.getVariableAllocationPosition(info.currentClass, n.f0.tokenImage);
+			r.appendResult(info.getIndent() + var + " = [ this + " + pos + "]\n" );
+			r.setReturnValue(var);
+			String className = st.getClassNameByIDInClassVariable(info.currentClass, n.f0.tokenImage);
+			if(className != null) info.usedClass = className;
+		}else{//local variable
+			String className = st.getClassNameByIDInMethod(info.currentClass, info.currentMethod, n.f0.tokenImage);
+			if(className != null) info.usedClass = className;
+			r.setReturnValue(n.f0.tokenImage);//TODO
+		}		
 		return r;
-		
 	}
 	
+	/**
+	 * f0 -> "this"
+	 */
+	public Result visit(ThisExpression n, Info info) {
+		Result r = new Result();
+		info.usedClass = info.currentClass;
+		r.setReturnValue("this");
+		return r;
+	}
+	
+	/**
+	 * f0 -> Identifier()
+	 * f1 -> "="
+	 * f2 -> Expression()
+	 * f3 -> ";"
+	 */
+	public Result visit(AssignmentStatement n, Info info) {
+		Result r = new Result();
+		Result r1 = n.f2.accept(this, info);
+		if(r1.hasReturnValue){
+			r.mergeResult(r1);
+		}
+		String id;
+		if(st.checkLocalVariable(info.currentClass, info.currentMethod, n.f0.f0.tokenImage))
+			id = n.f0.f0.tokenImage;
+		else
+			id = "[ this + " + st.getVariableAllocationPosition(info.currentClass, n.f0.f0.tokenImage) + " ]";
+		r.appendResult(info.getIndent() + id + " = ");
+		
+		if(r1.hasReturnValue){
+			r.appendResult(r1.returnValue);
+		}else{
+			r.mergeResult(r1);
+		}
+		r.appendResult("\n");
+		return r;
+	}
+
+
 
 }
