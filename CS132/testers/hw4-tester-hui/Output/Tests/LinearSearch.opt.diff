@@ -1,0 +1,31 @@
+--- SelfTestCases/LinearSearch.opt.out	2011-04-28 14:55:20.000000000 -0700
++++ ./Output/Tests/LinearSearch.opt.out	2014-12-07 19:20:20.000000000 -0800
+@@ -1,15 +1,15 @@
+-10
+-11
+-12
+-13
+-14
+-15
+-16
+-17
+-18
+-9999
+ 0
+-1
+-1
+ 0
+-55
++0
++0
++0
++0
++0
++0
++0
++9999
++--- Error (ProgramFault) ---
++invalid argument types: (data address<Heap.1>+0, integer10)
++  Main() line 12
++  LS.Start() line 31
++  LS.Search() line 94

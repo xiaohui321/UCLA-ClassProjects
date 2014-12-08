@@ -1,0 +1,35 @@
+--- SelfTestCases/BinaryTree.out	2011-04-28 14:55:20.000000000 -0700
++++ ./Output/Tests/BinaryTree.out	2014-12-07 19:20:17.000000000 -0800
+@@ -1,26 +1,8 @@
+ 16
+ 100000000
+-8
+-16
+-4
+-8
+-12
+-14
+-16
+-20
+-24
+-28
+-1
+-1
+-1
+-0
+-1
+-4
+-8
+-14
+-16
+-20
+-24
+-28
+-0
+-0
++--- Error (ProgramFault) ---
++require data address, found function address@Tree.GetKey
++  Main() line 38
++  BT.Start() line 74
++  Tree.Insert() line 341
++  Tree.GetKey() line 254

@@ -1,0 +1,21 @@
+--- SelfTestCases/TreeVisitor.opt.out	2011-04-28 14:55:20.000000000 -0700
++++ ./Output/Tests/TreeVisitor.opt.out	2014-12-07 19:20:25.000000000 -0800
+@@ -32,12 +32,9 @@
+ 1
+ 0
+ 1
+-4
+-8
+-14
+-16
+-20
+-24
+-28
+-0
+-0
++--- Error (ProgramFault) ---
++require data address, found integer1
++  Main() line 15
++  TV.Start() line 141
++  Tree.Delete() line 387
++  Tree.GetLeft() line 191

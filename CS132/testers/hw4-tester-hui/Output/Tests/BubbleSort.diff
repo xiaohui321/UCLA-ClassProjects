@@ -1,0 +1,19 @@
+--- SelfTestCases/BubbleSort.out	2011-04-28 14:55:20.000000000 -0700
++++ ./Output/Tests/BubbleSort.out	2014-12-07 19:20:19.000000000 -0800
+@@ -9,14 +9,5 @@
+ 19
+ 5
+ 99999
+-2
+-5
+-6
+-7
+-9
+-11
+-12
+-18
+-19
+-20
+-0
++--- Error (Explicit) ---
++array index out of bounds

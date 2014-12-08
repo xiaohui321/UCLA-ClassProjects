@@ -1,0 +1,28 @@
+--- SelfTestCases/LinearSearch.out	2011-04-28 14:55:20.000000000 -0700
++++ ./Output/Tests/LinearSearch.out	2014-12-07 19:20:21.000000000 -0800
+@@ -1,15 +1,12 @@
+-10
+-11
+-12
+-13
+-14
+-15
+-16
+-17
+-18
+-9999
+ 0
+-1
+-1
+ 0
+-55
++0
++0
++0
++0
++0
++0
++0
++9999
++--- Error (Explicit) ---
++array index out of bounds
