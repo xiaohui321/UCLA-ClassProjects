@@ -1,0 +1,66 @@
+#include <mpi.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <math.h>
+#include <omp.h>
+
+#define N 2048
+int main(int argc, char** argv){
+	int pnum, pid,size;
+	double elapsed_time_built_in, elapsed_time_mesh, elapsed_time_hypercube;
+	unsigned short seed[3];
+	float *A, *B1, *B2, *B3;
+
+	MPI_Init(&argc, &argv);
+	MPI_Comm_size(MPI_COMM_WORLD, &pnum);
+	MPI_Comm_rank(MPI_COMM_WORLD, &pid);
+
+	size = N/pnum;
+
+	if(pid = 0){
+		A = (float*) malloc( sizeof(float) * N);
+		seed[0] = 0; seed[1] = 1; seed[2] = 2;
+		for(i = 0; i < N; i++){
+			A[i] = (float)erand48(seed);
+		}
+	}
+
+	B1 = (float*) malloc( sizeof(float) * size);
+	B2 = (float*) malloc( sizeof(float) * size);
+	B3 = (float*) malloc( sizeof(float) * size);
+
+
+	MPI_Barrier(MPI_COMM_WORLD);
+	elapsed_time_built_in = -1*MPI_Wtime();
+	MPI_Scatter(A,size,MPI_FLOAT,B1,size,MPI_FLOAT,0,MPI_COMM_WORLD);
+	MPI_Barrier(MPI_COMM_WORLD);
+	elapsed_time_built_in += MPI_Wtime();
+
+	elapsed_time_mesh = -1*MPI_Wtime();
+	MPI_Scatter(A,size,MPI_FLOAT,B1,size,MPI_FLOAT,0,MPI_COMM_WORLD);
+	MPI_Barrier(MPI_COMM_WORLD);
+	elapsed_time_mesh += MPI_Wtime();
+
+	elapsed_time_hypercube = -1*MPI_Wtime();
+	MPI_Scatter(A,size,MPI_FLOAT,B1,size,MPI_FLOAT,0,MPI_COMM_WORLD);
+	MPI_Barrier(MPI_COMM_WORLD);
+	elapsed_time_hypercube += MPI_Wtime();
+
+	for(i = 0; i < size; i++){
+		if(B1[i] != B2[i] || B1[i] != B3[i]){
+			printf("wrong data\n");
+		}
+	}
+
+	for(int i = 0){
+		printf("Built in Method Performance   : %.2f GFlops\n", 2.0*n*n*n/elapsed_time_built_in/1000000000 );
+		printf("Mesh Method Performance       : %.2f GFlops\n", 2.0*n*n*n/elapsed_time_mesh/1000000000 );
+		printf("HyperCube Method Performance  : %.2f GFlops\n", 2.0*n*n*n/elapsed_time_hypercube/1000000000 );
+		free(A);
+	}
+	free(B1);
+	free(B2);
+	free(B3);
+  MPI_Finalize();
+}

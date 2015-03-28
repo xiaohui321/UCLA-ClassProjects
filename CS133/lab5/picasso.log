@@ -1,0 +1,23 @@
+================================================================
+  Picasso - Xilinx OpenCL Design Environment
+  Version: 2013.2.a.80513
+  Build date: Fri Nov 15 15:32:29 PM 2013
+  Copyright (C) 2013 Xilinx Inc. All rights reserved.
+================================================================
+@I [LIC-101] Checked out feature [ap_opencl]
+@I [XCL-10] Running '/usr/local/cs133/Picasso/picasso/Linux_x86_64/bin/picasso_bin'
+            for user 'xiaohuiz' on host 'lnxsrv08.seas.ucla.edu' (Linux_x86_64 version 2.6.32-504.8.1.el6.x86_64) on Sat Mar 14 20:28:57 PDT 2015
+            in directory '/w/ugrad.01/cs/xiaohuiz/cs133/lab5'
+@I [XCL-10] -----------------------------------------------------------------
+@I [XCL-10] -- Creating project: 'mmult_bitstream_clc'
+@I [XCL-10] -----------------------------------------------------------------
+@I [XCL-10] Target platform set to 'zc706-linux-uart'
+@I [XCL-10] Created new Picasso project 'mmult_bitstream_clc'
+@I [XCL-10] -----------------------------------------------------------------
+@I [XCL-10] -- Adding host sources
+@I [XCL-10] -----------------------------------------------------------------
+@E [XCL-70] *****************************************************************
+@E [XCL-70] ** ERROR: Cannot add file. 'test-cl.c' not found!
+@E [XCL-70] *****************************************************************
+@I [LIC-101] Checked in feature [ap_opencl]
+@I [LIC-101] Checked in feature [ap_opencl]

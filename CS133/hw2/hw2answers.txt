@@ -1,0 +1,66 @@
+Xiaohui, Zhou
+104-014-248
+CS133 HW2
+
+1.
+The idea of sorting the tasks in decreasing order of run time is better and should be finished first. The reason is that if the tasks in the end of the list are very big, i.e. long run time, then during the time that the single processor who working on the big task, other processors will be idle and these resources will be wasted. On the other hand, if the tasks with longer running time will be processed first, then initially all the processors will be busy working on these tasks and in the end, only small tasks will be left. It will not require processors to take lots of time and the workload balance will be distributed more evenly.
+
+2.
+(i)
+	C[i][j] depends on A[i][] and B[][j], all float arrays
+(ii)
+loop permutation:
+     directly applicable between i&j, and after changing initial value, applicable between i&k, j&k
+loop distribution:
+     not applicable, as there is only one statement inside the loops
+loop fusion:
+     not applicable, as there is only one statement
+loop shifting:
+     not applicable as there is only one statement
+loop unrolling:
+     applicable
+loop strip-mining:
+     applicable, which is similar to what we did in blocking in hw1
+loop unroll-and-jam:
+     applicable, which is similar to what we did in blocking in hw1
+loop tiling:
+     applicable, which is similar to what we did in blocking in hw1
+loop parallelization:
+     applicable, which is similar to what we did in hw1 part 1
+loop vectorization:
+     applicable, which is similar to blocking in hw1
+
+3.
+The result of my program is 999999937 999999929 999999893
+Without using openmp, running time: 21030 ms
+
+dynamic scheduling:
+20320 ms
+21450 ms
+20010 ms
+23130 ms
+22350 ms
+MIN: 20010ms
+MAX: 23130ms
+AVERAGE:21000ms
+
+static scheduling:
+64180 ms
+74730 ms
+68230 ms
+65380 ms
+66020 ms
+MIN: 64180 ms
+MAX: 74730 ms
+AVERAGE: 67000 ms
+
+Dynamic scheduling is much better in this program becuase the size of each inside loop is different and thus a dynamic schedule will be better.
+
+4.
+Results:
+3.1410560 10710ms
+3.1433630 11200ms
+3.1422670 14080ms
+3.1434520 7830ms
+3.1445010 9300ms
+

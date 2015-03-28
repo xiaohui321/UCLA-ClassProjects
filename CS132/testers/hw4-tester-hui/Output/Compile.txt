@@ -1,0 +1,11 @@
+./Output/Unzipped/hw4/VaporToVaporMCompiler.java:123: error: cannot find symbol
+				info.symbolToRegisterTable.put(v.name, freeRegisters.first());
+				                                                    ^
+  symbol:   method first()
+  location: variable freeRegisters of type HashSet<String>
+./Output/Unzipped/hw4/VaporToVaporMCompiler.java:124: error: cannot find symbol
+				freeRegisters.remove(freeRegisters.first());
+				                                  ^
+  symbol:   method first()
+  location: variable freeRegisters of type HashSet<String>
+2 errors

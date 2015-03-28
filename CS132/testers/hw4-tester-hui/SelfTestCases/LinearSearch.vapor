@@ -57,7 +57,7 @@ func LS.Print(this)
     t.3 = [t.2]
     t.3 = Lt(j t.3)
     if t.3 goto :bounds1
-      Error("array index out of bounds")
+      Error("array index out of bounds3")
     bounds1:
     t.3 = MulS(j 4)
     t.3 = Add(t.3 t.2)
@@ -83,7 +83,7 @@ func LS.Search(this num)
     t.3 = [t.2]
     t.3 = Lt(j t.3)
     if t.3 goto :bounds2
-      Error("array index out of bounds")
+      Error("array index out of bounds2")
     bounds2:
     t.3 = MulS(j 4)
     t.3 = Add(t.3 t.2)
@@ -130,7 +130,7 @@ func LS.Init(this sz)
     t.5 = [t.4]
     t.5 = Lt(j t.5)
     if t.5 goto :bounds3
-      Error("array index out of bounds")
+      Error("array index out of bounds1")
     bounds3:
     t.5 = MulS(j 4)
     t.5 = Add(t.5 t.4)

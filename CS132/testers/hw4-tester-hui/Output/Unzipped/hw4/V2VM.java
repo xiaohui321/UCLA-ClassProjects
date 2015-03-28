@@ -23,8 +23,8 @@ public class V2VM{
 			VaporProgram vp = parseVapor(System.in,System.err);
 			String result = processDataSegmentResult(vp.dataSegments);
 			for(VFunction fun : vp.functions){
-				SymbolTable st = new SymbolTable(fun);
-				result += st.result;
+				VaporToVaporMCompiler c = new VaporToVaporMCompiler(fun);
+				result += c.result;
 			}
 			System.out.println(result);
 		} catch (Exception e) {

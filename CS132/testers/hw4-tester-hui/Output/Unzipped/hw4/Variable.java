@@ -14,8 +14,8 @@ public class Variable {
 	
 	public static Comparator<Variable> liveRangeComparator = new Comparator<Variable>() {
 		public int compare(Variable v1, Variable v2){
-			int result = Integer.compare(v1.begin, v2.begin);
-			return result == 0 ? Integer.compare(v1.end, v2.end) : result;
+			if(v1.begin != v2.begin) return v1.begin - v2.begin;
+			return v1.end - v2.end;
 		}
 	};
 }

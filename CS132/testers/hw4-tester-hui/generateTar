@@ -1,12 +1,4 @@
 #! /bin/bash
-
-cp ../../../../eclipseworkspace/CS132HW4/src/FirstRoundVaporVisitor.java ./hw4/
-cp ../../../../eclipseworkspace/CS132HW4/src/SecondRoundVaporVisitor.java ./hw4/
-cp ../../../../eclipseworkspace/CS132HW4/src/SymbolTable.java ./hw4/
-cp ../../../../eclipseworkspace/CS132HW4/src/Variable.java ./hw4/
-cp ../../../../eclipseworkspace/CS132HW4/src/VisitorInfo.java ./hw4/
-cp ../../../../eclipseworkspace/CS132HW4/src/VisitorResult.java ./hw4/
-
 tar -cvzf hw4.tgz ./hw4/*
 
 ./run SelfTestCases hw4.tgz

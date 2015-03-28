@@ -1,0 +1,8 @@
+#! /bin/bash
+
+cp ../../../../eclipseworkspace/CS132HW5/src/FirstRoundVisitor.java ./hw5/
+cp ../../../../eclipseworkspace/CS132HW5/src/VisitorInfo.java ./hw5/
+
+tar -cvzf hw5.tgz ./hw5/*
+
+./run SelfTestCases hw5.tgz

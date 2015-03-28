@@ -1,18 +1,13 @@
-import java.util.TreeSet;
-
 import cs132.vapor.ast.VAssign;
 import cs132.vapor.ast.VBranch;
 import cs132.vapor.ast.VBuiltIn;
 import cs132.vapor.ast.VCall;
-import cs132.vapor.ast.VCodeLabel;
-import cs132.vapor.ast.VFunction;
 import cs132.vapor.ast.VGoto;
-import cs132.vapor.ast.VMemRead;
-import cs132.vapor.ast.VMemWrite;
-import cs132.vapor.ast.VOperand;
-import cs132.vapor.ast.VReturn;
 import cs132.vapor.ast.VInstr.VisitorPR;
+import cs132.vapor.ast.VMemRead;
 import cs132.vapor.ast.VMemRef.Global;
+import cs132.vapor.ast.VMemWrite;
+import cs132.vapor.ast.VReturn;
 
 
 public class SecondRoundVaporVisitor extends VisitorPR<VisitorInfo,String,Exception>{
@@ -64,13 +59,9 @@ public class SecondRoundVaporVisitor extends VisitorPR<VisitorInfo,String,Except
 		String last = "";
 		String src = "";
 		String dest = "";
-		switch(arg.op.name){
-		case "Add":
-		case "Sub":
-		case "MulS":
-		case "Eq":
-		case "Lt":
-		case "LtS":
+		
+		if(arg.op.name.equals("Add") || arg.op.name.equals("Sub") || arg.op.name.equals("MulS") 
+				|| arg.op.name.equals("Eq") || arg.op.name.equals("Lt") || arg.op.name.equals("LtS") ){
 			String arg0 = vi.getCorrespondingVariable(arg.args[0].toString());
 			String arg1 = vi.getCorrespondingVariable(arg.args[1].toString());
 			dest = vi.getCorrespondingVariable(arg.dest.toString());
@@ -87,13 +78,13 @@ public class SecondRoundVaporVisitor extends VisitorPR<VisitorInfo,String,Except
 				dest  = "$v1";
 			}
 			return pre + "\t" + dest + " = " + arg.op.name + "(" + arg0 +  " " + arg1 + ")\n" + last;
-		case "PrintIntS":
+		}else if(arg.op.name.equals("PrintIntS")){
 			src = vi.getCorrespondingVariable(arg.args[0].toString());
 			if(src.charAt(0) == 'l')
 				return "\t$v1 = " + src +"\n\tPrintIntS($v1)\n";
 			else
 				return "\tPrintIntS(" + src +  ")\n";
-		case "HeapAllocZ":
+		}else if(arg.op.name.equals("HeapAllocZ")){
 			src = vi.getCorrespondingVariable(arg.args[0].toString());
 			dest = vi.getCorrespondingVariable(arg.dest.toString());
 			if(src.charAt(0) == 'l'){
@@ -105,11 +96,10 @@ public class SecondRoundVaporVisitor extends VisitorPR<VisitorInfo,String,Except
 				dest = "$v1";
 			}
 			return pre + "\t" + dest + " = HeapAllocZ(" + src + ")\n" + last;
-		case "Error":
+		}else if(arg.op.name.equals("Error")){
 			return "\tError(" + arg.args[0].toString() + ")\n";
-		default:
-			throw new Error();
 		}
+		throw new Error();
 	}
 
 	@Override
@@ -123,8 +113,8 @@ public class SecondRoundVaporVisitor extends VisitorPR<VisitorInfo,String,Except
 			src = "$v1";
 		}
 		if(dest.charAt(0) == 'l'){
-			last = "\t" + dest + " = $v1\n";
-			dest = "$v1";
+			pre += "\t $v0 = " + dest + "\n";
+			dest = "$v0";
 		}
 		return pre + "\t[" + dest + " + " + ((Global) arg.dest).byteOffset + "] = " +  src + "\n" + last;
 	}
@@ -136,14 +126,14 @@ public class SecondRoundVaporVisitor extends VisitorPR<VisitorInfo,String,Except
 		String dest = vi.getCorrespondingVariable(arg.dest.toString());
 		String src  = vi.getCorrespondingVariable(((Global)arg.source).base.toString());
 		if(src.charAt(0) == 'l'){
-			pre= "\t$v1 = " + src + "\n";
+			pre = "\t$v1 = " + src + "\n";
 			src = "$v1";
 		}
 		if(dest.charAt(0) == 'l'){
-			last = "\t" + dest + " = $v1\n";
-			dest = "$v1";
+			last = "\t" + dest + " = $v0\n";
+			dest = "$v0";
 		}
-		return pre + "\t" + dest + " =  [" + src + " + " + ((Global) arg.source).byteOffset + "]\n" + last;
+		return pre + "\t" + dest + " = [" + src + " + " + ((Global) arg.source).byteOffset + "]\n" + last;
 	}
 
 	@Override
